@@ -1,0 +1,17 @@
+1. Database design:
+
+Part table design
+	- id : Integer (Primary key)
+	- Name : varchar
+	- SKU : varchar(6)
+	- Description : varchar
+	- OnSale : Boolean
+	- StockCount : Integer
+	- Manufacturer : (foreign key linking to manufacturer id) Integer
+
+Manufacturer table design:
+	- id : Integer (primary key)
+	- Name : varchar
+	- PartsOnSale : Boolean
+
+
