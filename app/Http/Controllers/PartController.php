@@ -55,7 +55,7 @@ class PartController extends Controller
     public function index()
     {
         //page display handled within the react app
-        return view('react');
+        return view('home')->with('parts', Part::get());
     }
 
     /**
@@ -107,14 +107,11 @@ class PartController extends Controller
      */
     public function show($id) //if no id return all
     {
+        // Part::where('id', $id)->first();
+        return View('manufacturerEditView')->
+        with('manufacturers', Manufacturer::get())->
+        with('part', Part::where('id', $id)->first());
 
-        if($id == "all") {
-            return Part::all();
-        }
-
-        if(is_numeric($id)) {
-            return Part::where('id', $id)->first();
-        }
 
     }
 
@@ -127,7 +124,10 @@ class PartController extends Controller
     public function edit($id)
     {
         //page display handled within the react app
-        return view('react');
+        return View('manufacturerEditView')->
+        with('manufacturers', Manufacturer::get())->
+        with('part', Part::where('id', $id)->first())->
+        with('state', 'edit');
     }
 
     /**
@@ -156,7 +156,7 @@ class PartController extends Controller
 
         //special cases
         $SKU = $request->input('SKU');
-        if($SKU && $this->canUseSKU($SKU)) {
+        if($SKU && ($existingPart['SKU'] === $SKU || $this->canUseSKU($SKU))) {
             $existingPart->setAttribute('SKU', $SKU);
         }
 

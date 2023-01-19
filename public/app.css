@@ -1,0 +1,18 @@
+body {
+    /* background-color: brown; */
+}
+
+li {
+    list-style-type: none;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+a {
+    text-decoration: none;
+    text-decoration-line: none;
+    color: white;
+}

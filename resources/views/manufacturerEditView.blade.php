@@ -1,5 +1,5 @@
 @extends('layouts.app')
 
 @section('content')
-    @include('components.partsTable')
+    @include('components.partsForm')
 @endsection

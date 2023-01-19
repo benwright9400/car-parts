@@ -16,7 +16,8 @@ return new class extends Migration
         Schema::create('manufacturers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->boolean('parts_on_sale');
+            $table->boolean('sell_parts');
+            $table->Integer('parts_on_sale');
             $table->timestamps();
         });
     }

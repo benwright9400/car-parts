@@ -16,4 +16,23 @@ Manufacturer table design:
 
 
 Implemented as migrations then models were assigned to each table.
-Resource controllers were then linked to each model.
+Resource controllers were then linked to each model.
+
+2. Interface design:
+
+Page structure:
+	- Home page
+	- Manufacturers page
+	- Create manufacturer page
+	- View/Edit manufacturer page
+	- Parts page
+	- Create parts page
+	- View/Edit parts page
+
+Information architecture for each page:
+	- Navbar with links to manufacturers and parts (with parts as priority)
+	- Table showing relevant element or elements
+
+Styling frameworks used:
+	- Bootstrap 5
+

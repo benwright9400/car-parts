@@ -22,6 +22,7 @@ Route::get('/', function () {
 Route::resource('/manufacturers',ManufacturerController::class);
 
 Route::resource('/parts',PartController::class);
+// Route::post('/parts',[PartController::class, 'update'])->name('parts.update');
 
 Auth::routes();
 

@@ -17,7 +17,7 @@ class ManufacturerController extends Controller
     public function index()
     {
         //page display handled within the react app
-        return view('react');
+        return view('manufacturers')->with('manufacturers', Manufacturer::get());
     }
 
     /**
