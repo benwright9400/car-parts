@@ -15,3 +15,5 @@ Manufacturer table design:
 	- PartsOnSale : Boolean
 
 
+Implemented as migrations then models were assigned to each table.
+Resource controllers were then linked to each model.

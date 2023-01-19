@@ -16,7 +16,7 @@ use App\Http\Controllers\PartController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('react');
 });
 
 Route::resource('/manufacturers',ManufacturerController::class);

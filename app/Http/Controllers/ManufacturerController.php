@@ -16,7 +16,8 @@ class ManufacturerController extends Controller
      */
     public function index()
     {
-        return Manufacturer::all();
+        //page display handled within the react app
+        return view('react');
     }
 
     /**
@@ -26,7 +27,8 @@ class ManufacturerController extends Controller
      */
     public function create()
     {
-        //
+        //page display handled within the react app
+        return view('react');
     }
 
     /**
@@ -46,9 +48,13 @@ class ManufacturerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id) //if no id show all
     {
-        //
+        if(isset($id) && is_Numeric($id)) {
+            return Manufacturer::where('id', $id)->first();
+        } else {
+            return Manufacturer::all();
+        }
     }
 
     /**
@@ -59,7 +65,8 @@ class ManufacturerController extends Controller
      */
     public function edit($id)
     {
-        //
+        //page display handled within the react app
+        return view('react');
     }
 
     /**

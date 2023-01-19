@@ -4,10 +4,49 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Part;
-
+use App\Models\Manufacturer;
+use Illuminate\Support\Facades\Log;
 
 class PartController extends Controller
 {
+    /**
+     * Check that the manufacturer exists
+     * 
+     * @return boolean
+     */
+    protected function manufacturerExists($manufacturerId) {
+        $manufacturerCount = Manufacturer::where('id', $manufacturerId)->count();
+
+        return $manufacturerCount > 0 ? true : false;
+    }
+
+    /**
+     * Check that the SKU is unique when adding or making changes to a row
+     * 
+     * @return boolean
+     */
+    public function canUseSKU($SKU, $action = "create") {
+        $SKUCount = Part::where('SKU', $SKU)->count();
+
+        if($action === "update") {
+            return $SKUCount >= 1 ? true : false;
+        } else { // $action === CREATE
+            return $SKUCount == 0 ? true : false;
+        }
+    }
+    
+    /**
+     * Assigns value to object if exists
+     * 
+     * @returns null
+     */
+    protected function assignIfExists($column, $request, $partObj) {
+        $requestValue = $request->input($column);
+        if($requestValue) {
+            $partObj->setAttribute($column, $requestValue);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +54,8 @@ class PartController extends Controller
      */
     public function index()
     {
-        return Part::all();
+        //page display handled within the react app
+        return view('react');
     }
 
     /**
@@ -25,7 +65,8 @@ class PartController extends Controller
      */
     public function create()
     {
-        //
+        //page display handled within the react app
+        return view('react');
     }
 
     /**
@@ -36,7 +77,26 @@ class PartController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $newPart = new Part();
+
+        $newPart->name = $request->input('name');
+        if($this->canUseSKU($request->input('SKU'))) {
+            $newPart->SKU = $request->input('SKU');
+        } else {
+            return "failure: cannot use SKU";
+        }
+        $newPart->description = $request->input('description');
+        $newPart->on_sale = $request->input('on_sale');
+        if($this->manufacturerExists($request->input('manufacturer_id'))) {
+            $newPart->manufacturer_id = $request->input('manufacturer_id');
+        } else {
+            $newPart->manufacturer_id = 1;
+        }
+        $newPart->stock_count = $request->input('stock_count');
+        // Log::info('newpart: '.$newPart->attributesToArray());
+        $issaved = $newPart->save();
+
+        return $issaved ? "success" : "failure";
     }
 
     /**
@@ -45,9 +105,17 @@ class PartController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id) //if no id return all
     {
-        //
+
+        if($id == "all") {
+            return Part::all();
+        }
+
+        if(is_numeric($id)) {
+            return Part::where('id', $id)->first();
+        }
+
     }
 
     /**
@@ -58,7 +126,8 @@ class PartController extends Controller
      */
     public function edit($id)
     {
-        //
+        //page display handled within the react app
+        return view('react');
     }
 
     /**
@@ -70,7 +139,35 @@ class PartController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if($request->input('special_command') == "manufacturer_sellable") {
+            $isUpdated = Part::where('manufacturer_id', $request->input('manufacturer_id'))
+            ->update(['on_sale' => $request->input('on_sale')]);
+            return $isUpdated ? "success" : "failure";
+        }
+
+        $existingPart = Part::where('id', $id)->first();
+        if(!$existingPart) {
+            return "failure";
+        }
+        $this->assignIfExists('name', $request, $existingPart);
+        $this->assignIfExists('description', $request, $existingPart);
+        $this->assignIfExists('on_sale', $request, $existingPart);
+        $this->assignIfExists('stock_count', $request, $existingPart);
+
+        //special cases
+        $SKU = $request->input('SKU');
+        if($SKU && $this->canUseSKU($SKU)) {
+            $existingPart->setAttribute('SKU', $SKU);
+        }
+
+        $manufacturerId = $request->input('manufacturer_id');
+        if($manufacturerId && $this->manufacturerExists($manufacturerId)) {
+            $existingPart->setAttribute('manufacturer_id', $manufacturerId);
+        }
+
+        $issaved = $existingPart->save();
+    
+        return $issaved ? "success" : "failure";
     }
 
     /**
@@ -81,6 +178,8 @@ class PartController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $existingPart = Part::where('id', $id)->first();
+        $isdestroyed = $existingPart->delete();
+        return $isdestroyed ? "success" : "failure";
     }
 }
