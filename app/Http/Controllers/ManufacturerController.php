@@ -57,11 +57,13 @@ class ManufacturerController extends Controller
      */
     public function show($id) //if no id show all
     {
-        if(isset($id) && is_Numeric($id)) {
-            return Manufacturer::where('id', $id)->first();
-        } else {
-            return Manufacturer::all();
-        }
+        return View('manufacturerEditView')->
+        with('manufacturer', Manufacturer::where('id', $id)->first());
+        // if(isset($id) && is_Numeric($id)) {
+        //     return Manufacturer::where('id', $id)->first();
+        // } else {
+        //     return Manufacturer::all();
+        // }
     }
 
     /**
@@ -72,8 +74,7 @@ class ManufacturerController extends Controller
      */
     public function edit($id)
     {
-        //page display handled within the react app
-        return view('react'); 
+        return View('manufacturerEditView')->with('manufacturer', Manufacturer::where('id', $id)->first())->with('state', 'edit');
     }
 
     /**

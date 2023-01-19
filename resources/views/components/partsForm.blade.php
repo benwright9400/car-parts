@@ -39,7 +39,7 @@
             <label for="onSale" class="form-label">On sale</label>
             <select id="onSale" name="on_sale" class="form-select" aria-label="Default select example" {{isset($state) ? null : "disabled"}}>
                 <option value="1" {{ isset($part) && $part['on_sale'] == true ? "selected" : null }}>Yes</option>
-                <option value="0" {{ !(isset($part) && $part['on_sale'] == false) ? "selected" : null }}>No</option>
+                <option value="0" {{ (isset($part) && $part['on_sale'] == false) ? "selected" : null }}>No</option>
             </select>
         </div>
         <div class="mb-3">
