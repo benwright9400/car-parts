@@ -16,7 +16,6 @@ class ManufacturerController extends Controller
      */
     public function index()
     {
-        //page display handled within the react app
         return view('manufacturers')->with('manufacturers', Manufacturer::get());
     }
 
@@ -27,7 +26,6 @@ class ManufacturerController extends Controller
      */
     public function create()
     {
-        //page display handled within the react app
         return View('manufacturerEditView')->with('state', 'create');
     }
 
@@ -66,15 +64,10 @@ class ManufacturerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) //if no id show all
+    public function show($id)
     {
         return View('manufacturerEditView')->
-        with('manufacturer', Manufacturer::where('id', $id)->first());
-        // if(isset($id) && is_Numeric($id)) {
-        //     return Manufacturer::where('id', $id)->first();
-        // } else {
-        //     return Manufacturer::all();
-        // }
+            with('manufacturer', Manufacturer::where('id', $id)->first());
     }
 
     /**
@@ -85,7 +78,8 @@ class ManufacturerController extends Controller
      */
     public function edit($id)
     {
-        return View('manufacturerEditView')->with('manufacturer', Manufacturer::where('id', $id)->first())->with('state', 'edit');
+        return View('manufacturerEditView')->with('manufacturer', Manufacturer::where('id', $id)->first())
+            ->with('state', 'edit');
     }
 
     /**
@@ -98,6 +92,7 @@ class ManufacturerController extends Controller
     public function update(Request $request, $id)
     {
         $existingManufacturer = Manufacturer::where('id', $id)->first();
+        
         if(!$existingManufacturer) {
             return "failure";
         }
@@ -113,8 +108,10 @@ class ManufacturerController extends Controller
             $existingManufacturer->setAttribute('parts_on_sale', $partsCount);
         }
 
+        /*this was highly problematic, took 2 hours to find this workaround for, 
+          and could not be solved using the attribute method*/
         $sellParts = $request->input('sell_parts');
-        if($sellParts) { //this was highly problematic, took 2 hours to find a workaround for, and could not be solved using the attribute method
+        if($sellParts) { 
             $old = $existingManufacturer->sell_parts;
             $value = 0;
             if($existingManufacturer->sell_parts == 0) {
@@ -140,6 +137,7 @@ class ManufacturerController extends Controller
     public function destroy($id)
     {
         $existingManufacturer = Manufacturer::where('id', $id)->first();
+
         if($existingManufacturer && Part::where('manufacturer_id', $id)->count() > 0) {
             $deletedParts = Part::where('manufacturer_id', $id)->delete();
             $isdestroyed = $existingManufacturer->delete();
@@ -147,6 +145,6 @@ class ManufacturerController extends Controller
         }
 
         $isdestroyed = $existingManufacturer->delete();
-        return $isdestroyed ? "success" : "failure";
+        return $isdestroyed ? "success: manufacturer deleted" : "failure: manufacturer not deleted";
     }
 }

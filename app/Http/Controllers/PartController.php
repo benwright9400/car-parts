@@ -182,7 +182,7 @@ class PartController extends Controller
             $existingPart->setAttribute('manufacturer_id', $manufacturerId);
         }
 
-        /*this was highly problematic, took 2 hours to find a workaround for, 
+        /*this was highly problematic, took 2 hours to find this workaround for, 
           and could not be solved using the attribute method*/
         $sellParts = $request->input('on_sale');
         if($sellParts) { 
