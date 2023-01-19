@@ -21,4 +21,6 @@ Route::resource('/manufacturers',ManufacturerController::class);
 
 Route::resource('/parts',PartController::class);
 
+Route::get('/manufacturers/parts/{id}',[PartController::class, 'viewByManufacturer']);
+
 Auth::routes();

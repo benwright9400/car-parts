@@ -95,6 +95,24 @@ class PartController extends Controller
     }
 
     /**
+     * returns a view with only parts from a specific manufacturer
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function viewByManufacturer($id)
+    {
+        $formattedManufacturers = [];
+        $unformattedManufacturers = Manufacturer::get();
+
+        foreach($unformattedManufacturers as $manufacturer) {
+            $formattedManufacturers[$manufacturer['id']] = $manufacturer;
+        }
+        
+        return View('home')->with('manufacturers', $formattedManufacturers)->
+            with('parts', Part::where('manufacturer_id', $id)->get());
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
