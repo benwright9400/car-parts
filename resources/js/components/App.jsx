@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-function Example() {
+function App() {
     return (
         <div className="container">
             <div className="row justify-content-center">
@@ -17,14 +17,12 @@ function Example() {
     );
 }
 
-export default Example;
+export default App;
 
-if (document.getElementById('example')) {
-    const Index = ReactDOM.createRoot(document.getElementById("example"));
+// if (document.getElementById('app')) {
+//     const Index = ReactDOM.createRoot(document.getElementById("app"));
 
-    Index.render(
-        <React.StrictMode>
-            <Example/>
-        </React.StrictMode>
-    )
-}
+//     Index.render(
+//         <Example/>
+//     )
+// }
