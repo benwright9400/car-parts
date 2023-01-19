@@ -48,14 +48,40 @@ class PartController extends Controller
     }
 
     /**
+     * Update manufacturers with sum of all stock
+     * 
+     * @returns null
+     */
+    protected function updateManufacturerStock($id) {
+        $manufacturer = Manufacturer::where('id', $id)->first();
+
+        $parts = Part::where('manufacturer_id', $id)->get();
+
+        $sum = 0;
+        foreach($parts as $part) {
+            $sum = $sum + $part['stock_count'];
+        }
+        $manufacturer->parts_on_sale = $sum;
+
+        $manufacturer->save();
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //page display handled within the react app
-        return view('home')->with('parts', Part::get());
+        //produce array with corresponding manufacturer ids as indices
+        $formattedManufacturers = [];
+        $unformattedManufacturers = Manufacturer::get();
+
+        foreach($unformattedManufacturers as $manufacturer) {
+            $formattedManufacturers[$manufacturer['id']] = $manufacturer;
+        }
+
+        return view('home')->with('parts', Part::get())->with('manufacturers', $formattedManufacturers);
     }
 
     /**
@@ -65,8 +91,7 @@ class PartController extends Controller
      */
     public function create()
     {
-        //page display handled within the react app
-        return view('react');
+        return View('partsEditView')->with('manufacturers', Manufacturer::get())->with('state', 'create');
     }
 
     /**
@@ -80,21 +105,26 @@ class PartController extends Controller
         $newPart = new Part();
 
         $newPart->name = $request->input('name');
+        $newPart->description = $request->input('description');
+        $newPart->on_sale = $request->input('on_sale');
+        $newPart->stock_count = $request->input('stock_count');
+
         if($this->canUseSKU($request->input('SKU'))) {
             $newPart->SKU = $request->input('SKU');
         } else {
             return "failure: cannot use SKU";
         }
-        $newPart->description = $request->input('description');
-        $newPart->on_sale = $request->input('on_sale');
+        
         if($this->manufacturerExists($request->input('manufacturer_id'))) {
             $newPart->manufacturer_id = $request->input('manufacturer_id');
         } else {
             $newPart->manufacturer_id = 1;
         }
-        $newPart->stock_count = $request->input('stock_count');
+        
         // Log::info('newpart: '.$newPart->attributesToArray());
         $issaved = $newPart->save();
+
+        $this->updateManufacturerStock($newPart->manufacturer_id);
 
         return $issaved ? "success" : "failure";
     }
@@ -105,14 +135,10 @@ class PartController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) //if no id return all
+    public function show($id) 
     {
-        // Part::where('id', $id)->first();
-        return View('manufacturerEditView')->
-        with('manufacturers', Manufacturer::get())->
-        with('part', Part::where('id', $id)->first());
-
-
+        return View('partsEditView')->with('manufacturers', Manufacturer::get())->
+            with('part', Part::where('id', $id)->first());
     }
 
     /**
@@ -123,11 +149,8 @@ class PartController extends Controller
      */
     public function edit($id)
     {
-        //page display handled within the react app
-        return View('manufacturerEditView')->
-        with('manufacturers', Manufacturer::get())->
-        with('part', Part::where('id', $id)->first())->
-        with('state', 'edit');
+        return View('partsEditView')->with('manufacturers', Manufacturer::get())->
+            with('part', Part::where('id', $id)->first())->with('state', 'edit');
     }
 
     /**
@@ -139,22 +162,16 @@ class PartController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if($request->input('special_command') == "manufacturer_sellable") {
-            $isUpdated = Part::where('manufacturer_id', $request->input('manufacturer_id'))
-            ->update(['on_sale' => $request->input('on_sale')]);
-            return $isUpdated ? "success" : "failure";
+        $existingPart = Part::where('id', $id)->first();
+
+        if(!$existingPart) {
+            return "failure: part does not exist";
         }
 
-        $existingPart = Part::where('id', $id)->first();
-        if(!$existingPart) {
-            return "failure";
-        }
         $this->assignIfExists('name', $request, $existingPart);
         $this->assignIfExists('description', $request, $existingPart);
-        $this->assignIfExists('on_sale', $request, $existingPart);
         $this->assignIfExists('stock_count', $request, $existingPart);
 
-        //special cases
         $SKU = $request->input('SKU');
         if($SKU && ($existingPart['SKU'] === $SKU || $this->canUseSKU($SKU))) {
             $existingPart->setAttribute('SKU', $SKU);
@@ -165,7 +182,22 @@ class PartController extends Controller
             $existingPart->setAttribute('manufacturer_id', $manufacturerId);
         }
 
+        /*this was highly problematic, took 2 hours to find a workaround for, 
+          and could not be solved using the attribute method*/
+        $sellParts = $request->input('on_sale');
+        if($sellParts) { 
+            $value = 0;
+            if($existingPart->on_sale == 0) {
+                $value = 1;
+            }
+            $existingPart->on_sale = $value;
+            $existingPart->save();
+        }
+
+
         $issaved = $existingPart->save();
+
+        $this->updateManufacturerStock($existingPart->manufacturer_id);
     
         return $issaved ? "success" : "failure";
     }
@@ -180,6 +212,7 @@ class PartController extends Controller
     {
         $existingPart = Part::where('id', $id)->first();
         $isdestroyed = $existingPart->delete();
+        $this->updateManufacturerStock($newPart->manufacturer_id);
         return $isdestroyed ? "success" : "failure";
     }
 }

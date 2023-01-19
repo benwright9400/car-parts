@@ -2,7 +2,7 @@
     <h1>Part</h1>
     <form
         @if (isset($state) && $state === "edit")
-             action='../parts/{{ isset($part) ? $part['id'] : null}}' method='PUT'
+             action='../parts/{{ isset($part) ? $part['id'] : null}}' method='PATCH'
         @elseif((isset($state) && $state === "create"))
              action='{{ route('parts.store') }}' method='POST'
         @endif
@@ -17,7 +17,9 @@
         <div id="alert-dialog" class="alert alert-danger" style="visibility: hidden" role="alert">
         </div>
 
-        <input type="hidden" name="id" value="{{ isset($part) ? $part['id'] : null}}" {{isset($state) ? null : "disabled"}}>
+        <input type="hidden" id="object-id" name="id" value="{{ isset($part) ? $part['id'] : null}}" >
+        <input type="hidden" id="hidden-method" name="id" value="{{ isset($state) && $state === "edit" ? 'PATCH' : 'POST'}}" >
+
 
         <div class="mb-3">
           <label for="partName" class="form-label">Name</label>
@@ -57,17 +59,42 @@
         @elseif((isset($state) && $state === "create"))
             <button type="submit" onclick="post()" class='btn btn-info'>Create</button>
         @else
-            <button class='btn btn-info'><a href="../parts/{{ isset($part) ? $part['id'] : null}}/edit">Edit</a></button>
+            <button class='btn btn-info'><a href="{{ url('/') }}/parts/{{ isset($part) ? $part['id'] : null}}/edit">Edit</a></button>
         @endif
-        
     </form>
 
     <script>
+        function getMethod() {
+            const method = document.getElementById('hidden-method').value;
+            console.log(method);
+            return method;
+        }
+
+        function getId() {
+            const method = document.getElementById('object-id').value;
+            console.log(method);
+            return method;
+        }
+
+        function getSendURL() {
+            const method = document.getElementById('hidden-method').value;
+            const origin = location.origin;
+
+            if(method === "PATCH") {
+                return origin + '/parts/' + getId();
+            }
+            if(method === "POST") {
+                return origin + '/parts/';
+            }
+            return method;
+        }
+
         function post(e) {
             document.getElementById('submit-form').addEventListener('submit', function(e) {e.preventDefault();});
+            const origin = location.origin;
             // e.preventDefault();
-            fetch('http://localhost:8000/parts/1', {
-            method: 'PATCH',
+            fetch(getSendURL(), {
+            method: getMethod(),
             body: JSON.stringify({
                 name: document.getElementById("partName").value,
                 SKU: document.getElementById("SKU").value,
@@ -84,14 +111,13 @@
             .then((json) => {
                 console.log(json);
                 if(json === "success") {
-                    window.open('http://localhost:8000/parts/1', "_self");
+                    window.open(origin + '/parts/' + getId(), "_self");
                 } else {
                     document.getElementById('alert-dialog').style.visibility = "visible";
                     document.getElementById('alert-dialog').innerHTML = json;
                 }
             });
         }
-        
     </script>
 </div>
 

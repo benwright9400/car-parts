@@ -1,10 +1,10 @@
 <div style="width: 50%; margin: auto; margin-top: 4rem;">
-    <h1>Part</h1>
+    <h1>Manufacturer</h1>
     <form
         @if (isset($state) && $state === "edit")
-             action='../manufacturer/{{ isset($manufacturer) ? $manufacturer['id'] : null}}' method='PUT'
+             action='{{ url('/') }}/manufacturer/{{ isset($manufacturer) ? $manufacturer['id'] : null}}' method='PUT'
         @elseif((isset($state) && $state === "create"))
-             action='{{ route('manufacturer.store') }}' method='POST'
+             action='{{ route('manufacturers.store') }}' method='POST'
         @endif
         enctype = "multipart/form-data"
         id="submit-form"
@@ -13,7 +13,8 @@
         <div id="alert-dialog" class="alert alert-danger" style="visibility: hidden" role="alert">
         </div>
 
-        <input id="hidden-value" type="hidden" name="id" value="{{ isset($manufacturer) ? $manufacturer['id'] : null}}" {{isset($state) ? null : "disabled"}}>
+        <input type="hidden" id="object-id" name="id" value="{{ isset($manufacturer['id']) ? $manufacturer['id'] : null}}" >
+        <input type="hidden" id="hidden-method" name="id" value="{{ (isset($state) && $state === "edit") ? 'PATCH' : 'POST'}}" >
 
         <div class="mb-3">
           <label for="partName" class="form-label">Name</label>
@@ -21,7 +22,7 @@
         </div>
         <div class="mb-3">
             <label for="partsOnSale" class="form-label">Parts on sale</label>
-            <input type="email" class="form-control" id="sell_parts" name="partsOnSale" value="{{ isset($manufacturer) ? $manufacturer['parts_on_sale'] : null}}" disabled>
+            <input type="email" class="form-control" id="parts_on_sale" name="partsOnSale" value="{{ isset($manufacturer) ? $manufacturer['parts_on_sale'] : null}}" disabled>
         </div>
         <div class="mb-3">
             <label for="sell_parts" class="form-label">On sale</label>
@@ -36,20 +37,49 @@
         @elseif((isset($state) && $state === "create"))
             <button type="submit" onclick="post()" class='btn btn-info'>Create</button>
         @else
-            <button class='btn btn-info'><a href="../manufacturers/{{ isset($manufacturer) ? $manufacturer['id'] : null}}/edit">Edit</a></button>
+            <button class='btn btn-info'><a href="{{ url('/') }}/manufacturers/{{ isset($manufacturer) ? $manufacturer['id'] : null}}/edit">Edit</a></button>
         @endif
         
     </form>
 
     <script>
+        console.log(document.getElementById("sell_parts").value);
+        function getMethod() {
+            const method = document.getElementById('hidden-method').value;
+            console.log(method);
+            return method;
+        }
+
+        function getId() {
+            const method = document.getElementById('object-id').value;
+            console.log(method);
+            return method;
+        }
+
+        function getSendURL() {
+            const method = document.getElementById('hidden-method').value;
+            const origin = location.origin;
+
+            if(method === "PATCH") {
+                console.log("returning patch route " + getId());
+                return origin + '/manufacturers/' + getId();
+            }
+            if(method === "POST") {
+                return origin + '/manufacturers/';
+            }
+            return method;
+        }
+
         function post(e) {
             document.getElementById('submit-form').addEventListener('submit', function(e) {e.preventDefault();});
-            // e.preventDefault();
-            fetch('http://localhost:8000/manufacturers/' + getId(), {
-            method: 'PATCH',
+            const origin = location.origin;
+
+            fetch(getSendURL(), {
+            method: getMethod(),
             body: JSON.stringify({
                 name: document.getElementById("partName").value,
                 sell_parts: document.getElementById("sell_parts").value,
+                parts_on_sale: 0
             }),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
@@ -59,16 +89,12 @@
             .then((json) => {
                 console.log(json);
                 if(json === "success") {
-                    window.open('http://localhost:8000/manufacturers/' + getId(), "_self");
+                    window.open(origin + '/manufacturers/', "_self");
                 } else {
                     document.getElementById('alert-dialog').style.visibility = "visible";
                     document.getElementById('alert-dialog').innerHTML = json;
                 }
             });
-        }
-
-        function getId() {
-            return document.getElementById("hidden-value").value;
         }
         
     </script>

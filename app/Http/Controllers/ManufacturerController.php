@@ -28,8 +28,18 @@ class ManufacturerController extends Controller
     public function create()
     {
         //page display handled within the react app
-        return view('react');
+        return View('manufacturerEditView')->with('state', 'create');
     }
+
+    /**
+     * changes part sale status
+     * 
+     * @return null
+     */
+    protected function updatePartSaleStatus($id, $status) {
+        Part::where('manufacturer_id', $id)->update(["on_sale"=>$status]);
+    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -41,10 +51,11 @@ class ManufacturerController extends Controller
     {
         $newManufacturer = new Manufacturer();
 
-        $newManufacturer ->name = $request->input('name');
-        $newManufacturer ->parts_on_sale = 0;
+        $newManufacturer->name = $request->input('name');
+        $newManufacturer->parts_on_sale = 0;
+        $newManufacturer->sell_parts = $request->input('sell_parts');
 
-        $issaved = $newManufacturer ->save();
+        $issaved = $newManufacturer->save();
 
         return $issaved ? "success" : "failure";
     }
@@ -102,8 +113,21 @@ class ManufacturerController extends Controller
             $existingManufacturer->setAttribute('parts_on_sale', $partsCount);
         }
 
-        $issaved =  $existingManufacturer->save();
-    
+        $sellParts = $request->input('sell_parts');
+        if($sellParts) { //this was highly problematic, took 2 hours to find a workaround for, and could not be solved using the attribute method
+            $old = $existingManufacturer->sell_parts;
+            $value = 0;
+            if($existingManufacturer->sell_parts == 0) {
+                $value = 1;
+            }
+            $existingManufacturer->sell_parts = $value;
+            $existingManufacturer->save();
+            $this->updatePartSaleStatus($id, $value);
+        }
+        
+
+        $issaved = $existingManufacturer->save();
+
         return $issaved ? "success" : "failure";
     }
 

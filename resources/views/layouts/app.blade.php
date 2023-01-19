@@ -24,12 +24,12 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <ul class="navbar">
-                    <a class="navbar-brand" href="#">PartLog</a>
+                    <a class="navbar-brand" href="{{ url('/') }}/parts">PartLog</a>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="../parts">Parts</a>
+                        <a class="nav-link active" aria-current="page" href="{{ url('/') }}/parts">Parts</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="../manufacturers">Manufacturers</a>
+                        <a class="nav-link active" aria-current="page" href="{{ url('/') }}/manufacturers">Manufacturers</a>
                     </li>
                 </ul>
             </div>

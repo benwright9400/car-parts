@@ -15,15 +15,10 @@ use App\Http\Controllers\PartController;
 |
 */
 
-Route::get('/', function () {
-    return view('react');
-});
+Route::get('/', [PartController::class, 'index']);
 
 Route::resource('/manufacturers',ManufacturerController::class);
 
 Route::resource('/parts',PartController::class);
-// Route::post('/parts',[PartController::class, 'update'])->name('parts.update');
 
 Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
