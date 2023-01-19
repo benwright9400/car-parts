@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Manufacturer;
-
+use App\Models\Part;
 
 
 class ManufacturerController extends Controller
@@ -39,7 +39,14 @@ class ManufacturerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $newManufacturer = new Manufacturer();
+
+        $newManufacturer ->name = $request->input('name');
+        $newManufacturer ->parts_on_sale = 0;
+
+        $issaved = $newManufacturer ->save();
+
+        return $issaved ? "success" : "failure";
     }
 
     /**
@@ -66,7 +73,7 @@ class ManufacturerController extends Controller
     public function edit($id)
     {
         //page display handled within the react app
-        return view('react');
+        return view('react'); 
     }
 
     /**
@@ -78,7 +85,25 @@ class ManufacturerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $existingManufacturer = Manufacturer::where('id', $id)->first();
+        if(!$existingManufacturer) {
+            return "failure";
+        }
+
+        //special cases
+        $name = $request->input('name');
+        if($name) {
+            $existingManufacturer->setAttribute('name', $name);
+        }
+
+        $partsCount = $request->input('parts_on_sale');
+        if($partsCount) {
+            $existingManufacturer->setAttribute('parts_on_sale', $partsCount);
+        }
+
+        $issaved =  $existingManufacturer->save();
+    
+        return $issaved ? "success" : "failure";
     }
 
     /**
@@ -89,6 +114,14 @@ class ManufacturerController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $existingManufacturer = Manufacturer::where('id', $id)->first();
+        if($existingManufacturer && Part::where('manufacturer_id', $id)->count() > 0) {
+            $deletedParts = Part::where('manufacturer_id', $id)->delete();
+            $isdestroyed = $existingManufacturer->delete();
+            return $isdestroyed && $deletedParts ? "success: manufacturer and parts deleted" : "failure: manufacturer and parts not deleted";
+        }
+
+        $isdestroyed = $existingManufacturer->delete();
+        return $isdestroyed ? "success" : "failure";
     }
 }
