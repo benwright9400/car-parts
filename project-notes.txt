@@ -30,8 +30,8 @@ Page structure:
 	- View/Edit parts page
 
 Information architecture for each page:
-	- Navbar with links to manufacturers and parts (with parts as priority)
-	- Table showing relevant element or elements
+	- Navbar with link to manufacurers
+	- Form or table showing relevant element or elements
 
 Styling frameworks used:
 	- Bootstrap 5

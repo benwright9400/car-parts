@@ -1,3 +1,8 @@
+This is a small CRUD project built with php larvavel for the
+management of the stock of car parts.
+
+ === Installation instructions ===
+
 1. Configure the database
 
 Open your MySQL database manager and create a database called 
@@ -24,7 +29,8 @@ git remote add origin https://github.com/benwright9400/car-parts.git
 
 git pull origin master
 
-Also ensure that you have downloaded composer from https://getcomposer.org/
+Also ensure that you have downloaded and installed composer 
+from https://getcomposer.org/
 
 3. Setup the application
 Enter the directory of your project and remove the .example extension
