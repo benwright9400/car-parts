@@ -18,6 +18,7 @@
         </div>
 
         <input type="hidden" id="object-id" name="id" value="{{ isset($part) ? $part['id'] : null}}" >
+        <input type="hidden" id="manufacturer-id" name="id" value="{{ isset($part) ? $part['manufacturer_id'] : null}}" >
         <input type="hidden" id="hidden-method" name="id" value="{{ isset($state) && $state === "edit" ? 'PATCH' : 'POST'}}" >
 
 
@@ -80,6 +81,12 @@
             return method;
         }
 
+        function getManufacturerId() {
+            const method = document.getElementById('manufacturer-id').value;
+            console.log(method);
+            return method;
+        }
+
         function getSendURL() {
             const method = document.getElementById('hidden-method').value;
             const origin = location.origin;
@@ -115,7 +122,7 @@
             .then((json) => {
                 console.log(json);
                 if(json === "success") {
-                    window.open(origin + '/parts/' + getId(), "_self");
+                    window.open(origin + '/manufacturers/parts/' + getManufacturerId(), "_self");
                 } else {
                     document.getElementById('alert-dialog').style.visibility = "visible";
                     document.getElementById('alert-dialog').innerHTML = json;

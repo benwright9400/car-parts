@@ -10,6 +10,16 @@ use App\Models\Part;
 class ManufacturerController extends Controller
 {
     /**
+     * changes part sale status
+     * 
+     * @return null
+     */
+    protected function updatePartSaleStatus($id, $status) 
+    {
+        Part::where('manufacturer_id', $id)->update(["on_sale"=>$status]);
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -28,16 +38,6 @@ class ManufacturerController extends Controller
     {
         return View('manufacturerEditView')->with('state', 'create');
     }
-
-    /**
-     * changes part sale status
-     * 
-     * @return null
-     */
-    protected function updatePartSaleStatus($id, $status) {
-        Part::where('manufacturer_id', $id)->update(["on_sale"=>$status]);
-    }
-
 
     /**
      * Store a newly created resource in storage.

@@ -81,7 +81,7 @@ class PartController extends Controller
             $formattedManufacturers[$manufacturer['id']] = $manufacturer;
         }
 
-        return view('home')->with('parts', Part::get())->with('manufacturers', $formattedManufacturers);
+        return view('components')->with('parts', Part::get())->with('manufacturers', $formattedManufacturers);
     }
 
     /**
@@ -108,7 +108,7 @@ class PartController extends Controller
             $formattedManufacturers[$manufacturer['id']] = $manufacturer;
         }
         
-        return View('home')->with('manufacturers', $formattedManufacturers)->
+        return View('components')->with('manufacturers', $formattedManufacturers)->
             with('parts', Part::where('manufacturer_id', $id)->get());
     }
 
@@ -143,7 +143,6 @@ class PartController extends Controller
             $newPart->manufacturer_id = 1;
         }
         
-        // Log::info('newpart: '.$newPart->attributesToArray());
         $issaved = $newPart->save();
 
         $this->updateManufacturerStock($newPart->manufacturer_id);

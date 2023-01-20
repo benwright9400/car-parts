@@ -67,8 +67,7 @@
         .then((json) => {
             console.log(json);
             if(json === "success") {
-                // Alert(json);
-                window.open(origin+'/parts', "_self");
+                window.open(location.href, "_self");
             } else {
                 Alert(json);
             }
