@@ -9,10 +9,10 @@
         enctype = "multipart/form-data"
         id="submit-form"
         >
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        
-        {{-- @method('POST') --}}
 
+
+        {{-- hidden utility items --}}
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <div id="alert-dialog" class="alert alert-danger" style="visibility: hidden" role="alert">
         </div>
@@ -21,6 +21,7 @@
         <input type="hidden" id="hidden-method" name="id" value="{{ isset($state) && $state === "edit" ? 'PATCH' : 'POST'}}" >
 
 
+        {{-- inputs --}}
         <div class="mb-3">
           <label for="partName" class="form-label">Name</label>
           <input type="email" class="form-control" id="partName" name="name" value="{{ isset($part) ? $part['name'] : null }}" {{isset($state) ? null : "disabled"}}>
@@ -54,12 +55,15 @@
             </select>
         </div>
 
+        
+        {{-- action buttons --}}
         @if (isset($state) && $state === "edit")
             <button type="submit" onclick="post()" class='btn btn-info'>Save</button>
         @elseif((isset($state) && $state === "create"))
             <button type="submit" onclick="post()" class='btn btn-info'>Create</button>
         @else
             <button class='btn btn-info'><a href="{{ url('/') }}/parts/{{ isset($part) ? $part['id'] : null}}/edit">Edit</a></button>
+            <button type="submit" onclick="deleteItem()" class='btn btn-danger'>Delete</button>
         @endif
     </form>
 
@@ -112,6 +116,26 @@
                 console.log(json);
                 if(json === "success") {
                     window.open(origin + '/parts/' + getId(), "_self");
+                } else {
+                    document.getElementById('alert-dialog').style.visibility = "visible";
+                    document.getElementById('alert-dialog').innerHTML = json;
+                }
+            });
+        }
+
+        function deleteItem() {
+            document.getElementById('submit-form').addEventListener('submit', function(e) {e.preventDefault();});
+            fetch(location.href, {
+            method: 'DELETE',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+            })
+            .then((response) => response.text())
+            .then((json) => {
+                console.log(json);
+                if(json === "success") {
+                    window.open(origin + '/manufacturers', "_self");
                 } else {
                     document.getElementById('alert-dialog').style.visibility = "visible";
                     document.getElementById('alert-dialog').innerHTML = json;

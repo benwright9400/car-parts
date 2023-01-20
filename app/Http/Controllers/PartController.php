@@ -230,7 +230,7 @@ class PartController extends Controller
     {
         $existingPart = Part::where('id', $id)->first();
         $isdestroyed = $existingPart->delete();
-        $this->updateManufacturerStock($newPart->manufacturer_id);
+        $this->updateManufacturerStock($existingPart->manufacturer_id);
         return $isdestroyed ? "success" : "failure";
     }
 }

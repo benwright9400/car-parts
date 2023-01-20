@@ -9,13 +9,19 @@
         enctype = "multipart/form-data"
         id="submit-form"
         >
+
+
+        {{-- hidden utility items --}}
         <meta name="csrf-token" content="{{ csrf_token() }}">
+
         <div id="alert-dialog" class="alert alert-danger" style="visibility: hidden" role="alert">
         </div>
 
         <input type="hidden" id="object-id" name="id" value="{{ isset($manufacturer['id']) ? $manufacturer['id'] : null}}" >
         <input type="hidden" id="hidden-method" name="id" value="{{ (isset($state) && $state === "edit") ? 'PATCH' : 'POST'}}" >
 
+
+        {{-- inputs --}}
         <div class="mb-3">
           <label for="partName" class="form-label">Name</label>
           <input type="email" class="form-control" id="partName" name="name" value="{{ isset($manufacturer) ? $manufacturer['name'] : null }}" {{isset($state) ? null : "disabled"}}>
@@ -32,18 +38,21 @@
             </select>
         </div>
 
+        
+        {{-- action buttons --}}
         @if (isset($state) && $state === "edit")
             <button type="submit" onclick="post()" class='btn btn-info'>Save</button>
         @elseif((isset($state) && $state === "create"))
             <button type="submit" onclick="post()" class='btn btn-info'>Create</button>
         @else
             <button class='btn btn-info'><a href="{{ url('/') }}/manufacturers/{{ isset($manufacturer) ? $manufacturer['id'] : null}}/edit">Edit</a></button>
-        @endif
+            <button type="submit" onclick="deleteItem()" class='btn btn-danger'>Delete</button>
+            @endif
         
     </form>
 
     <script>
-        console.log(document.getElementById("sell_parts").value);
+
         function getMethod() {
             const method = document.getElementById('hidden-method').value;
             console.log(method);
@@ -90,6 +99,26 @@
                 console.log(json);
                 if(json === "success") {
                     window.open(origin + '/manufacturers/', "_self");
+                } else {
+                    document.getElementById('alert-dialog').style.visibility = "visible";
+                    document.getElementById('alert-dialog').innerHTML = json;
+                }
+            });
+        }
+
+        function deleteItem() {
+            document.getElementById('submit-form').addEventListener('submit', function(e) {e.preventDefault();});
+            fetch(location.href, {
+            method: 'DELETE',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+            })
+            .then((response) => response.text())
+            .then((json) => {
+                console.log(json);
+                if(json === "success") {
+                    window.open(origin + '/manufacturers', "_self");
                 } else {
                     document.getElementById('alert-dialog').style.visibility = "visible";
                     document.getElementById('alert-dialog').innerHTML = json;
