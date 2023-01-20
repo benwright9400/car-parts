@@ -21,6 +21,7 @@ please change the 'DB_PORT' variable in the .env file of
 the project to the relevent port.
 
 2. Download the application
+
 Create a new directory on your computer.
 Initalise a git repository then perform the following commands in a
 bash terminal with git installed:
@@ -33,6 +34,7 @@ Also ensure that you have downloaded and installed composer
 from https://getcomposer.org/
 
 3. Setup the application
+
 Enter the directory of your project and remove the .example extension
 from the .env file.
 
@@ -46,6 +48,7 @@ php artisan migrate
 php artisan db:seed
 
 4. Launch the application
+
 Run the following command
 
 php artisan serve
