@@ -7,6 +7,7 @@ If there is not a user with these credentials for the database server
 create one:
 
 username: 'root'
+
 password: ''
 
 Ensure that the server is running locally on port 3306.
@@ -23,9 +24,16 @@ git remote add origin https://github.com/benwright9400/car-parts.git
 
 git pull origin master
 
+Also ensure that you have downloaded composer from https://getcomposer.org/
+
 3. Setup the application
+Enter the directory of your project and remove the .example extension
+from the .env file.
+
 Enter the directory of your project on a bash terminal and run the
 following commands:
+
+composer install
 
 php artisan migrate
 
