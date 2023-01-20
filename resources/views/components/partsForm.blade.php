@@ -1,74 +1,14 @@
 <div style="width: 50%; margin: auto; margin-top: 4rem;">
-    <h1>Part</h1>
-    <form
-        @if (isset($state) && $state === "edit")
-             action='../parts/{{ isset($part) ? $part['id'] : null}}' method='PATCH'
-        @elseif((isset($state) && $state === "create"))
-             action='{{ route('parts.store') }}' method='POST'
-        @endif
-        enctype = "multipart/form-data"
-        id="submit-form"
-        >
-
-
-        {{-- hidden utility items --}}
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-
-        <div id="alert-dialog" class="alert alert-danger" style="visibility: hidden" role="alert">
-        </div>
-
-        <input type="hidden" id="object-id" name="id" value="{{ isset($part) ? $part['id'] : null}}" >
-        <input type="hidden" id="manufacturer-id" name="id" value="{{ isset($part) ? $part['manufacturer_id'] : null}}" >
-        <input type="hidden" id="hidden-method" name="id" value="{{ isset($state) && $state === "edit" ? 'PATCH' : 'POST'}}" >
-
-
-        {{-- inputs --}}
-        <div class="mb-3">
-          <label for="partName" class="form-label">Name</label>
-          <input type="text" class="form-control" id="partName" name="name" value="{{ isset($part) ? $part['name'] : null }}" {{isset($state) ? null : "disabled"}}>
-        </div>
-        <div class="mb-3">
-            <label for="SKU" class="form-label">SKU</label>
-            <input type="text" class="form-control" id="SKU" name="SKU" value="{{ isset($part) ? $part['SKU'] : null}}" {{isset($state) ? null : "disabled"}}>
-        </div>
-        <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <input type="text" class="form-control" id="description" name="description" value="{{ isset($part) ? $part['description'] : null }}" {{isset($state) ? null : "disabled"}}>
-        </div>
-        <div class="mb-3">
-            <label for="stock" class="form-label">Stock</label>
-            <input type="number" class="form-control" id="stock" name="stock_count" value="{{ isset($part) ? $part['stock_count'] : null }}" {{isset($state) ? null : "disabled"}}>
-        </div>
-        <div class="mb-3">
-            <label for="onSale" class="form-label">On sale</label>
-            <select id="onSale" name="on_sale" class="form-select" aria-label="Default select example" {{isset($state) ? null : "disabled"}}>
-                <option value="1" {{ isset($part) && $part['on_sale'] == true ? "selected" : null }}>Yes</option>
-                <option value="0" {{ (isset($part) && $part['on_sale'] == false) ? "selected" : null }}>No</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="manufacturer" class="form-label">Manufacturer</label>
-            <select id="manufacturer" name="manufacturer_id" class="form-select" aria-label="Default select example" {{isset($state) ? null : "disabled"}}>
-                <option value="">None</option>
-                @foreach ($manufacturers as $manufacturer)
-                    <option value="{{$manufacturer['id']}}" value="{{ (isset($part) && $manufacturer['id'] === $part['id']) && $part['id']}}" {{(isset($part) && $manufacturer['id'] === $part['id']) ? "selected" : null}}>{{$manufacturer['name']}}</option>
-                @endforeach
-            </select>
-        </div>
-
-        
-        {{-- action buttons --}}
-        @if (isset($state) && $state === "edit")
-            <button type="submit" onclick="post()" class='btn btn-info'>Save</button>
-        @elseif((isset($state) && $state === "create"))
-            <button type="submit" onclick="post()" class='btn btn-info'>Create</button>
-        @else
-            <button class='btn btn-info'><a href="{{ url('/') }}/parts/{{ isset($part) ? $part['id'] : null}}/edit">Edit</a></button>
-            <button type="submit" onclick="deleteItem()" class='btn btn-danger'>Delete</button>
-        @endif
-    </form>
-
     <script>
+
+        //checking for changes on the sell_parts select 
+        //input to provide a readable value to the server
+        //: The server does not identify values of 0 but the DB reqires values of 0
+        let changes = 0;
+        function onSelectionChange() {
+            changes++;
+        }
+
         function getMethod() {
             const method = document.getElementById('hidden-method').value;
             console.log(method);
@@ -111,7 +51,7 @@
                 SKU: document.getElementById("SKU").value,
                 description: document.getElementById("description").value,
                 stock_count: document.getElementById("stock").value,
-                on_sale: document.getElementById("onSale").value,
+                on_sale: (changes % 2  === 0) ? 0 : 10,
                 manufacturer_id: document.getElementById("manufacturer").value,
             }),
             headers: {
@@ -150,5 +90,66 @@
             });
         }
     </script>
+
+    <h1>Part</h1>
+    <form enctype = "multipart/form-data" id="submit-form">
+
+        {{-- hidden utility items --}}
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        <div id="alert-dialog" class="alert alert-danger" style="visibility: hidden" role="alert">
+        </div>
+
+        <input type="hidden" id="object-id" name="id" value="{{ isset($part) ? $part['id'] : null}}" >
+        <input type="hidden" id="manufacturer-id" name="id" value="{{ isset($part) ? $part['manufacturer_id'] : null}}" >
+        <input type="hidden" id="hidden-method" name="id" value="{{ isset($state) && $state === "edit" ? 'PATCH' : 'POST'}}" >
+
+
+        {{-- inputs --}}
+        <div class="mb-3">
+          <label for="partName" class="form-label">Name</label>
+          <input type="text" class="form-control" id="partName" name="name" value="{{ isset($part) ? $part['name'] : null }}" {{isset($state) ? null : "disabled"}}>
+        </div>
+        <div class="mb-3">
+            <label for="SKU" class="form-label">SKU</label>
+            <input type="text" class="form-control" id="SKU" name="SKU" value="{{ isset($part) ? $part['SKU'] : null}}" {{isset($state) ? null : "disabled"}}>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" class="form-control" id="description" name="description" value="{{ isset($part) ? $part['description'] : null }}" {{isset($state) ? null : "disabled"}}>
+        </div>
+        <div class="mb-3">
+            <label for="stock" class="form-label">Stock</label>
+            <input type="number" class="form-control" id="stock" name="stock_count" value="{{ isset($part) ? $part['stock_count'] : null }}" {{isset($state) ? null : "disabled"}}>
+        </div>
+        <div class="mb-3">
+            <label for="onSale" class="form-label">On sale</label>
+            <select id="onSale" name="on_sale" class="form-select" aria-label="Default select example" onchange="onSelectionChange()" {{isset($state) ? null : "disabled"}}>
+                <option value="1" {{ isset($part) && $part['on_sale'] == true ? "selected" : null }}>Yes</option>
+                <option value="0" {{ (isset($part) && $part['on_sale'] == false) ? "selected" : null }}>No</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="manufacturer" class="form-label">Manufacturer</label>
+            <select id="manufacturer" name="manufacturer_id" class="form-select" aria-label="Default select example" {{isset($state) ? null : "disabled"}}>
+                <option value="">None</option>
+                @foreach ($manufacturers as $manufacturer)
+                    <option value="{{$manufacturer['id']}}" value="{{ (isset($part) && $manufacturer['id'] === $part['id']) && $part['id']}}" {{(isset($part) && $manufacturer['id'] === $part['id']) ? "selected" : null}}>{{$manufacturer['name']}}</option>
+                @endforeach
+            </select>
+        </div>
+
+        
+        {{-- action buttons --}}
+        @if (isset($state) && $state === "edit")
+            <button onclick="post()" class='btn btn-info'>Save</button>
+        @elseif((isset($state) && $state === "create"))
+            <button onclick="post()" class='btn btn-info'>Create</button>
+        @else
+            <button class='btn btn-info'><a href="{{ url('/') }}/parts/{{ isset($part) ? $part['id'] : null}}/edit">Edit</a></button>
+            <button onclick="deleteItem()" class='btn btn-danger'>Delete</button>
+        @endif
+    </form>
+
 </div>
 

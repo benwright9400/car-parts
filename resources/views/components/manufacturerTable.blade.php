@@ -1,3 +1,40 @@
+<script>
+    const origin = location.origin;
+
+    function getSendURL(id) {
+        console.log("id " + id);
+        return origin + '/manufacturers/' + id + "/";
+    }
+
+    function post(e) {
+        const id = e.id;
+        console.log(e.id);
+        console.log(e.checked);
+
+        console.log({sell_parts: ((e.checked) ? 1: 0)});
+
+        fetch(getSendURL(id), {
+        method: 'PATCH',
+        body: JSON.stringify({
+            sell_parts: 10,
+        }),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+        })
+        .then((response) => response.text())
+        .then((json) => {
+            console.log(json);
+            if(json === "success") {
+                window.open(origin + '/manufacturers', "_self");
+            } else {
+                Alert(json);
+            }
+        });
+    }
+
+</script>
+
 <div  style="width: 80%; margin: auto;">
 
     <div className="container container-fluid">
@@ -36,39 +73,3 @@
 
 </div>
 
-<script>
-    const origin = location.origin;
-
-    function getSendURL(id) {
-        console.log("id " + id);
-        return origin + '/manufacturers/' + id + "/";
-    }
-
-    function post(e) {
-        const id = e.id;
-        console.log(e.id);
-        console.log(e.checked);
-
-        console.log({sell_parts: ((e.checked) ? 1: 0)});
-
-        fetch(getSendURL(id), {
-        method: 'PATCH',
-        body: JSON.stringify({
-            sell_parts: 10,
-        }),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-        },
-        })
-        .then((response) => response.text())
-        .then((json) => {
-            console.log(json);
-            if(json === "success") {
-                window.open(origin + '/manufacturers', "_self");
-            } else {
-                Alert(json);
-            }
-        });
-    }
-
-</script>
