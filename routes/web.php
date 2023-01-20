@@ -15,7 +15,7 @@ use App\Http\Controllers\PartController;
 |
 */
 
-Route::get('/', [PartController::class, 'index']);
+Route::get('/', [ManufacturerController::class, 'index']);
 
 Route::resource('/manufacturers',ManufacturerController::class);
 
