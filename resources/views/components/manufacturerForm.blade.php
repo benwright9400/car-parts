@@ -24,11 +24,11 @@
         {{-- inputs --}}
         <div class="mb-3">
           <label for="partName" class="form-label">Name</label>
-          <input type="email" class="form-control" id="partName" name="name" value="{{ isset($manufacturer) ? $manufacturer['name'] : null }}" {{isset($state) ? null : "disabled"}}>
+          <input type="text" class="form-control" id="partName" name="name" value="{{ isset($manufacturer) ? $manufacturer['name'] : null }}" {{isset($state) ? null : "disabled"}}>
         </div>
         <div class="mb-3">
             <label for="partsOnSale" class="form-label">Parts on sale</label>
-            <input type="email" class="form-control" id="parts_on_sale" name="partsOnSale" value="{{ isset($manufacturer) ? $manufacturer['parts_on_sale'] : null}}" disabled>
+            <input type="number" class="form-control" id="parts_on_sale" name="partsOnSale" value="{{ isset($manufacturer) ? $manufacturer['parts_on_sale'] : null}}" disabled>
         </div>
         <div class="mb-3">
             <label for="sell_parts" class="form-label">On sale</label>

@@ -24,19 +24,19 @@
         {{-- inputs --}}
         <div class="mb-3">
           <label for="partName" class="form-label">Name</label>
-          <input type="email" class="form-control" id="partName" name="name" value="{{ isset($part) ? $part['name'] : null }}" {{isset($state) ? null : "disabled"}}>
+          <input type="text" class="form-control" id="partName" name="name" value="{{ isset($part) ? $part['name'] : null }}" {{isset($state) ? null : "disabled"}}>
         </div>
         <div class="mb-3">
             <label for="SKU" class="form-label">SKU</label>
-            <input type="email" class="form-control" id="SKU" name="SKU" value="{{ isset($part) ? $part['SKU'] : null}}" {{isset($state) ? null : "disabled"}}>
+            <input type="text" class="form-control" id="SKU" name="SKU" value="{{ isset($part) ? $part['SKU'] : null}}" {{isset($state) ? null : "disabled"}}>
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
-            <input type="email" class="form-control" id="description" name="description" value="{{ isset($part) ? $part['description'] : null }}" {{isset($state) ? null : "disabled"}}>
+            <input type="text" class="form-control" id="description" name="description" value="{{ isset($part) ? $part['description'] : null }}" {{isset($state) ? null : "disabled"}}>
         </div>
         <div class="mb-3">
             <label for="stock" class="form-label">Stock</label>
-            <input type="email" class="form-control" id="stock" name="stock_count" value="{{ isset($part) ? $part['stock_count'] : null }}" {{isset($state) ? null : "disabled"}}>
+            <input type="number" class="form-control" id="stock" name="stock_count" value="{{ isset($part) ? $part['stock_count'] : null }}" {{isset($state) ? null : "disabled"}}>
         </div>
         <div class="mb-3">
             <label for="onSale" class="form-label">On sale</label>

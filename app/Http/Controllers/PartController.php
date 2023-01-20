@@ -122,15 +122,19 @@ class PartController extends Controller
     {
         $newPart = new Part();
 
+        if(strlen($request->input('name')) == 0 || strlen($request->input('name')) == 0) {
+            return "failure: Please ensure that all forms are filled out";
+        }
+
         $newPart->name = $request->input('name');
         $newPart->description = $request->input('description');
         $newPart->on_sale = $request->input('on_sale');
         $newPart->stock_count = $request->input('stock_count');
 
-        if($this->canUseSKU($request->input('SKU'))) {
+        if($this->canUseSKU($request->input('SKU')) && strlen($request->input('SKU')) <= 6) {
             $newPart->SKU = $request->input('SKU');
         } else {
-            return "failure: cannot use SKU";
+            return "failure: SKU cannot be used - it may already be in use or you may be over the 6 character limit";
         }
         
         if($this->manufacturerExists($request->input('manufacturer_id'))) {
